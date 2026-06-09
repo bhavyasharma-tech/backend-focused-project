@@ -32,5 +32,5 @@ User.init(
         modelName:"User"
     }
 )
-
+console.log("User model initialized");
 export default User;
