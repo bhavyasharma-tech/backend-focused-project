@@ -4,9 +4,13 @@ import "./models/course.model";
 import "./models/enrollment.model";
 import "./models";
 import { sequelize, connectDB } from "./config/db";
+import userRoutes from "./routes/user.routes"
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+app.use(express.json())
+app.use("/api/users",userRoutes);
 
 const startServer = async () => {
   try {
