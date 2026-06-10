@@ -1,4 +1,5 @@
 import  User  from "../models/user.model";
+import { redisClient } from "../config/redis";
 
 export const createUserService = async (
   name: string,
@@ -13,7 +14,18 @@ export const createUserService = async (
 };
 
 export const getAllUsersService = async () => {
-  return await User.findAll();
+  const cachedUsers= await redisClient.get("users");
+
+  if(cachedUsers){
+    console.log("Cache Hit");
+    return JSON.parse(cachedUsers);
+  }
+  console.log("cache miss");
+
+  const users= await User.findAll();
+  await redisClient.set("users",JSON.stringify(users),{EX:60});
+
+  return users;
 };
 
 export const getUserByIdService = async (
