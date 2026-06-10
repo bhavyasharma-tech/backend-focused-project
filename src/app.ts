@@ -7,13 +7,10 @@ import { sequelize, connectDB } from "./config/db";
 import userRoutes from "./routes/user.routes"
 import { errorMiddleware } from "./middlewares/error.middleware";
 import { notFoundMiddleware } from "./middlewares/notFound.middleware";
-import { loggerMiddleware } from "./middlewares/logger.middleware";
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json())
-app.use(loggerMiddleware)
-
 app.use("/api/users",userRoutes);
 
 app.use(notFoundMiddleware);
