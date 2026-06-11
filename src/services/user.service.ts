@@ -14,18 +14,34 @@ export const createUserService = async (
 };
 
 export const getAllUsersService = async () => {
-  const cachedUsers= await redisClient.get("users");
+  try {
+    if (redisClient.isOpen) {
+      const cachedUsers = await redisClient.get("users");
 
-  if(cachedUsers){
-    console.log("Cache Hit");
-    return JSON.parse(cachedUsers);
+      if (cachedUsers) {
+        console.log("Cache Hit");
+        return JSON.parse(cachedUsers);
+      }
+
+      console.log("Cache Miss");
+    }
+
+    const users = await User.findAll();
+
+    if (redisClient.isOpen) {
+      await redisClient.set(
+        "users",
+        JSON.stringify(users),
+        { EX: 60 }
+      );
+    }
+
+    return users;
+  } catch (error) {
+    console.error("Redis error:", error);
+
+    return await User.findAll();
   }
-  console.log("cache miss");
-
-  const users= await User.findAll();
-  await redisClient.set("users",JSON.stringify(users),{EX:60});
-
-  return users;
 };
 
 export const getUserByIdService = async (
