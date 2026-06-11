@@ -1,0 +1,30 @@
+#workflow name
+name: CI Pipeline
+
+#when will workflow run
+on:
+  push:
+    branches: 
+      -main
+  pull_request:
+    branches:
+      - main
+#what will it do (in this only build otherwise a wokflow can have multiple jobs)
+jobs: 
+  build:
+    runs-on: ubuntu-latest  #tells os and github provied a vm
+    steps:
+    #downloads repo on machine equivalent to git clone
+      - name: Checkout respository
+        uses: actions/checkout@v4
+    #git installs node.js before running commands
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with: 
+          node-version: 22
+    #This installs everything from package.json
+      - name: Install dependencies
+        run: npm install
+    #builds the project
+      - name: Build project
+        run: npm run build  
